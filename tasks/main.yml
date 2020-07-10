@@ -1,0 +1,17 @@
+---
+# - name: create user
+#    import_tasks: deploy_motd.yml
+# - name: start and enable httpd
+#    import_tasks: deploy_nagios.yml
+- name: install httpd and move http configuration file
+  become: yes
+  import_tasks: deploy_httpd.yml
+
+- name: enable firewall and enable http/s port
+  import_tasks: deploy_firewall.yml
+    
+- name: install and set up mariadb
+  import_tasks: deploy_mariadb.yml
+
+- name: set up wordpress
+  import_tasks: deploy_wordpress.yml

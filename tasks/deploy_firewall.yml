@@ -1,0 +1,6 @@
+---
+- name: Enable Firewall on all the hosts
+  service: name=firewalld state=started enabled=yes
+    
+- name: Enable the firewall port for HTTP
+  firewalld: port=80/tcp permanent=true state=enabled immediate=yes
