@@ -1,0 +1,6 @@
+---
+- name: install prequisites
+  hosts: all
+  roles:
+  - common
+  
