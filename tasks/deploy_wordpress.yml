@@ -1,7 +1,7 @@
 ---
 - name: Download and unpack latest WordPress
   vars:
-    http_host: "your_domain"
+    http_host: "www.sample.com"
   unarchive:
     src: https://wordpress.org/latest.tar.gz
     dest: "/var/www/{{ http_host }}"
