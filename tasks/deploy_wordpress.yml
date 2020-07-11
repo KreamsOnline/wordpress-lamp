@@ -1,33 +1,57 @@
 ---
+- name: create folder for wordpress
+  file:
+    path: /var/www/chapterOne
+    state: directory
+
+- name: Add group "Office" to remote server
+  group:
+    name: www-data
+    state: present
+
+- name: create user for wordpress
+  user:
+    name: www-data
+    shell: /bin/bash
+    group: www-data
+
 - name: Download and unpack latest WordPress
   vars:
-    http_host: "www.sample.com"
+    http_host: "chapterOne"
   unarchive:
     src: https://wordpress.org/latest.tar.gz
     dest: "/var/www/{{ http_host }}"
     remote_src: yes
     creates: "/var/www/{{ http_host }}/wordpress"
-  tags: [ wordpress ]
+
 
 - name: Set ownership
+  vars:
+    http_host: "chapterOne"
   file:
     path: "/var/www/{{ http_host }}"
     state: directory
     recurse: yes
     owner: www-data
     group: www-data
-  tags: [ wordpress ]
+ 
 
 - name: Set permissions for directories
+  vars:
+    http_host: "chapterOne"
   shell: "/usr/bin/find /var/www/{{ http_host }}/wordpress/ -type d -exec chmod 750 {} \\;"
-  tags: [ wordpress ]
+
 
 - name: Set permissions for files
+  vars:
+    http_host: "chapterOne"
   shell: "/usr/bin/find /var/www/{{ http_host }}/wordpress/ -type f -exec chmod 640 {} \\;"
-  tags: [ wordpress ]
+
 
 - name: Set up wp-config
+  vars:
+    http_host: "chapterOne"
   template:
     src: "files/wp-config.php.j2"
     dest: "/var/www/{{ http_host }}/wordpress/wp-config.php"
-  tags: [ wordpress ]
+ 
