@@ -8,6 +8,7 @@
   import_tasks: deploy_httpd.yml
 
 - name: enable firewall and enable http/s port
+  become: yes
   import_tasks: deploy_firewall.yml
     
 - name: install and set up mariadb
