@@ -2,5 +2,4 @@
 - name: install prequisites
   hosts: all
   roles:
-  - common
-  
+    - { role: ../wordpress-lamp, tags: cardano }
