@@ -3,19 +3,15 @@
 
 
 Vagrant.configure("2") do |config|
- 
+
   config.vm.box = "centos/7"
- 
+
    config.vm.provider "virtualbox" do |vb|
-     vb.gui = true
-     vb.memory = "2048"
+     # vb.gui = true
+     vb.memory = "1536"
    end
+   config.vm.provision "shell", path: "boot.sh"
    config.vm.provision "ansible" do |ansible|
-     ansible.playbook = "playbooks.yml"
+     ansible.playbook = "playbook.yml"
    end
-  
-  # config.vm.provision "shell", inline: <<-SHELL
-  #   yum update
-  #   yum install -y  
-  # SHELL
 end
