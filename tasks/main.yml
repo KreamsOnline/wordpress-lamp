@@ -14,4 +14,5 @@
   import_tasks: deploy_mariadb.yml
 
 - name: set up wordpress
+  become: yes
   import_tasks: deploy_wordpress.yml
