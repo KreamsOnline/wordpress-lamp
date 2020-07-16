@@ -1,9 +1,4 @@
 ---
-- name: create folder for wordpress
-  file:
-    path: /var/www/chapterOne
-    state: directory
-
 - name: Add group "Office" to remote server
   group:
     name: www-data
@@ -15,9 +10,15 @@
     shell: /bin/bash
     group: www-data
 
+#- name: create folder for wordpress
+#  file:
+#    path: /var/www/chapterOne
+#    state: directory
+#    recurse: yes
+
 - name: Download and unpack latest WordPress
   vars:
-    http_host: "chapterOne"
+    http_host: "html"
   unarchive:
     src: https://wordpress.org/latest.tar.gz
     dest: "/var/www/{{ http_host }}"
@@ -27,31 +28,34 @@
 
 - name: Set ownership
   vars:
-    http_host: "chapterOne"
+    http_host: "html"
   file:
-    path: "/var/www/{{ http_host }}"
+    path: "/var/www/{{ http_host }}/wordpress"
     state: directory
     recurse: yes
-    owner: www-data
-    group: www-data
+    owner: apache
+    group: apache
  
 
-- name: Set permissions for directories
-  vars:
-    http_host: "chapterOne"
-  shell: "/usr/bin/find /var/www/{{ http_host }}/wordpress/ -type d -exec chmod 750 {} \\;"
+#- name: Set permissions for directories
+#  vars:
+#    http_host: "chapterOne"
+#  shell: "/usr/bin/find /var/www/{{ http_host }}/wordpress/ -type d -exec chmod 750 {} \\;"
 
 
-- name: Set permissions for files
+- name: Set permissions for wordpress folder
   vars:
-    http_host: "chapterOne"
-  shell: "/usr/bin/find /var/www/{{ http_host }}/wordpress/ -type f -exec chmod 640 {} \\;"
+    http_host: "html"
+  file:
+    path: /var/www/{{ http_host }}/wordpress
+    state: directory
+    mode: '0744'
 
 
 - name: Set up wp-config
-  vars:
-    http_host: "chapterOne"
   template:
     src: "files/wp-config.php.j2"
-    dest: "/var/www/{{ http_host }}/wordpress/wp-config.php"
+    dest: "/var/www/html/wordpress/wp-config.php"
+  notify:
+    - restart apache
  
