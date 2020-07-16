@@ -2,5 +2,6 @@
 # handlers files for apache
 
 - name: restart apache
+  become: yes
   service: name=httpd state=restarted
   listen: "restart httpd"

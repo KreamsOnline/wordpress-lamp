@@ -4,3 +4,20 @@
     
 - name: Enable the firewall port for HTTP
   firewalld: port=80/tcp permanent=true state=enabled immediate=yes
+
+- name: Enable the firewall port for HTTPs
+  firewalld: port=443/tcp permanent=true state=enabled immediate=yes
+
+#- name: enable https service for firewall
+  firewalld:
+    service: https
+    permanent: true
+    state: enabled
+    immediate: yes
+
+#- name: enable https service for firewall
+  firewalld:
+    service: http
+    permanent: true
+    state: enabled
+    immediate: yes
