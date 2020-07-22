@@ -12,6 +12,7 @@
   import_tasks: deploy_firewall.yml
     
 - name: install and set up mariadb
+  become: yes
   import_tasks: deploy_mariadb.yml
 
 - name: set up wordpress

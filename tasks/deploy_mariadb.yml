@@ -1,49 +1,26 @@
 ---
-- name: install mariadb
-  become: yes
-  yum:
-    name:
-      - mariadb
-      - mariadb-server
-      - MySQL-python
-      - php
-      - php-mysql
-      - php-gd
-      - php-mcrypt
-      - php-opcache
-      - php-json
-      - php-xml 
-      - php-soap 
-      - php-xmlrpc 
-      - php-mbstring
-    state: latest
 - name: start mariadb
-  become: yes
   service:
     name: mariadb
     enabled: true
     state: started
+- name: Create MariaDB database
+  mysql_db:
+    name: wordpress
+    state: present
 - name: mysql_root_password
-  become: yes
   vars:
     mysql_root_password: "Passwords21"
   mysql_user:
-    login_user: root
-    login_password: "{{ mysql_root_password }}"
-    user: root
-    check_implicit_admin: true
+    name: adminuser
+    #check_implicit_admin: true
     password: "{{ mysql_root_password }}"
-    host_all: yes
-- name: add wordpress database
-  become: yes
-  vars:
-    mysql_root_password: "Passwords21"
-  mysql_db:
-    login_host: localhost
-    login_user: root
-    login_password: "{{ mysql_root_password }}"
-    name: wordpress
-    state: present    
-    login_unix_socket: /var/lib/mysql/mysql.sock
+    priv: 'wordpress.*:ALL,GRANT'
+    state: present
+- name: Removes anonymous user account for localhost
+  mysql_user:
+    name: ''
+    host: localhost
+    state: absent
 - name: Removes the MySQL test database
-      mysql_db: db=test state=absent login_password="" login_user=root
+  mysql_db: name=test state=absent login_password="" login_user=root
