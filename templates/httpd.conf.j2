@@ -1,3 +1,4 @@
+#
 # This is the main Apache HTTP server configuration file.  It contains the
 # configuration directives that give the server its instructions.
 # See <URL:http://httpd.apache.org/docs/2.4/> for detailed information.
@@ -31,7 +32,7 @@ ServerRoot "/etc/httpd"
 
 #
 # Listen: Allows you to bind Apache to specific IP addresses and/or
-# ports, instead of the default. See also the 
+# ports, instead of the default. See also the <VirtualHost>
 # directive.
 #
 # Change this to Listen on specific IP addresses as shown below to 
@@ -69,10 +70,10 @@ Group apache
 #
 # The directives in this section set up the values used by the 'main'
 # server, which responds to any requests that aren't handled by a
-#  definition.  These values also provide defaults for
-# any  containers you may define later in the file.
+# <VirtualHost> definition.  These values also provide defaults for
+# any <VirtualHost> containers you may define later in the file.
 #
-# All of these directives may appear inside  containers,
+# All of these directives may appear inside <VirtualHost> containers,
 # in which case these default settings will be overridden for the
 # virtual host being defined.
 #
@@ -82,7 +83,7 @@ Group apache
 # e-mailed.  This address appears on some server-generated pages, such
 # as error documents.  e.g. admin@your-domain.com
 #
-ServerAdmin root@localhost
+ServerAdmin adminuser@localhost
 
 #
 # ServerName gives the name and port that the server uses to identify itself.
@@ -91,17 +92,17 @@ ServerAdmin root@localhost
 #
 # If your host doesn't have a registered DNS name, enter its IP address here.
 #
-ServerName www.mysite.com:80
+#ServerName www.example.com:80
 
 #
 # Deny access to the entirety of your server's filesystem. You must
 # explicitly permit access to web content directories in other 
-#  blocks below.
+# <Directory> blocks below.
 #
-
+<Directory />
     AllowOverride none
     Require all denied
-
+</Directory>
 
 #
 # Note that from this point forward you must specifically allow
@@ -115,7 +116,7 @@ ServerName www.mysite.com:80
 # documents. By default, all requests are taken from this directory, but
 # symbolic links and aliases may be used to point to other locations.
 #
-DocumentRoot "/var/www/html"
+DocumentRoot "/var/www/html/wordpress"
 
 #
 # Relax access to content within /var/www.
@@ -124,10 +125,10 @@ DocumentRoot "/var/www/html"
     AllowOverride None
     # Allow open access:
     Require all granted
-
+</Directory>
 
 # Further relax access to the default document root:
-<Directory "/var/www/html">
+<Directory "/var/www/html/wordpress">
     #
     # Possible values for the Options directive are "None", "All",
     # or any combination of:
@@ -153,15 +154,15 @@ DocumentRoot "/var/www/html"
     # Controls who can get stuff from this server.
     #
     Require all granted
-
+</Directory>
 
 #
 # DirectoryIndex: sets the file that Apache will serve if a directory
 # is requested.
 #
-
+<IfModule dir_module>
     DirectoryIndex index.html
-
+</IfModule>
 
 #
 # The following lines prevent .htaccess and .htpasswd files from being 
@@ -169,13 +170,13 @@ DocumentRoot "/var/www/html"
 #
 <Files ".ht*">
     Require all denied
-
+</Files>
 
 #
 # ErrorLog: The location of the error log file.
-# If you do not specify an ErrorLog directive within a 
+# If you do not specify an ErrorLog directive within a <VirtualHost>
 # container, error messages relating to that virtual host will be
-# logged here.  If you *do* define an error logfile for a 
+# logged here.  If you *do* define an error logfile for a <VirtualHost>
 # container, that host's errors will be logged there and not here.
 #
 ErrorLog "logs/error_log"
@@ -187,7 +188,7 @@ ErrorLog "logs/error_log"
 #
 LogLevel warn
 
-
+<IfModule log_config_module>
     #
     # The following directives define some format nicknames for use with
     # a CustomLog directive (see below).
@@ -195,16 +196,16 @@ LogLevel warn
     LogFormat "%h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-Agent}i\"" combined
     LogFormat "%h %l %u %t \"%r\" %>s %b" common
 
-    
+    <IfModule logio_module>
       # You need to enable mod_logio.c to use %I and %O
       LogFormat "%h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-Agent}i\" %I %O" combinedio
-    
+    </IfModule>
 
     #
     # The location and format of the access logfile (Common Logfile Format).
-    # If you do not define any access logfiles within a 
+    # If you do not define any access logfiles within a <VirtualHost>
     # container, they will be logged here.  Contrariwise, if you *do*
-    # define per- access logfiles, transactions will be
+    # define per-<VirtualHost> access logfiles, transactions will be
     # logged therein and *not* in this file.
     #
     #CustomLog "logs/access_log" common
@@ -214,9 +215,9 @@ LogLevel warn
     # (Combined Logfile Format) you can use the following directive.
     #
     CustomLog "logs/access_log" combined
+</IfModule>
 
-
-
+<IfModule alias_module>
     #
     # Redirect: Allows you to tell clients about documents that used to 
     # exist in your server's namespace, but do not anymore. The client 
@@ -232,7 +233,7 @@ LogLevel warn
     #
     # If you include a trailing / on /webpath then the server will
     # require it to be present in the URL.  You will also likely
-    # need to provide a  section to allow access to
+    # need to provide a <Directory> section to allow access to
     # the filesystem path.
 
     #
@@ -245,7 +246,7 @@ LogLevel warn
     #
     ScriptAlias /cgi-bin/ "/var/www/cgi-bin/"
 
-
+</IfModule>
 
 #
 # "/var/www/cgi-bin" should be changed to whatever your ScriptAliased
@@ -255,9 +256,9 @@ LogLevel warn
     AllowOverride None
     Options None
     Require all granted
+</Directory>
 
-
-
+<IfModule mime_module>
     #
     # TypesConfig points to the file containing the list of mappings from
     # filename extension to MIME-type.
@@ -303,7 +304,7 @@ LogLevel warn
     #
     AddType text/html .shtml
     AddOutputFilter INCLUDES .shtml
-
+</IfModule>
 
 #
 # Specify a default charset for all content served; this enables
@@ -314,14 +315,14 @@ LogLevel warn
 #
 AddDefaultCharset UTF-8
 
-
+<IfModule mime_magic_module>
     #
     # The mod_mime_magic module allows the server to use various hints from the
     # contents of the file itself to determine its type.  The MIMEMagicFile
     # directive tells the module where the hint definitions are located.
     #
     MIMEMagicFile conf/magic
-
+</IfModule>
 
 #
 # Customizable error responses come in three flavors:
@@ -349,4 +350,3 @@ EnableSendfile on
 # Supplemental configuration
 #
 # Load config files in the "/etc/httpd/conf.d" directory, if any.
-IncludeOptional conf.d/*.conf
