@@ -1,6 +1,4 @@
 ---
-- name: install httpd
-  yum: name=httpd state=latest
 - name: enable and start service
   service:
     name: httpd

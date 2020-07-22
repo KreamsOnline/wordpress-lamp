@@ -10,52 +10,50 @@
     shell: /bin/bash
     group: www-data
 
-#- name: create folder for wordpress
-#  file:
-#    path: /var/www/chapterOne
-#    state: directory
-#    recurse: yes
-
 - name: Download and unpack latest WordPress
   vars:
     http_host: "html"
   unarchive:
     src: https://wordpress.org/latest.tar.gz
-    dest: "/var/www/{{ http_host }}"
+    dest: "/tmp"
     remote_src: yes
-    creates: "/var/www/{{ http_host }}/wordpress"
+    creates: "/tmp/wordpress"
 
+- name: Move wordpress and set permissions
+  copy:
+    src: /tmp/wordpress
+    dest: /var/www/html/
+    remote_src: yes
+    owner: apache
+    group: apache
+    mode: u+rwx,g-rx,o-rx
 
-- name: Set ownership
-  vars:
-    http_host: "html"
+- name: create wp-uploads directory
   file:
-    path: "/var/www/{{ http_host }}/wordpress"
+    path: "/var/www/html/wordpress/wp-content/uploads"
     state: directory
     recurse: yes
     owner: apache
     group: apache
+    mode: '0755'
  
 
-#- name: Set permissions for directories
+#- name: Set permissions for wordpress folder
 #  vars:
-#    http_host: "chapterOne"
-#  shell: "/usr/bin/find /var/www/{{ http_host }}/wordpress/ -type d -exec chmod 750 {} \\;"
-
-
-- name: Set permissions for wordpress folder
-  vars:
-    http_host: "html"
-  file:
-    path: /var/www/{{ http_host }}/wordpress
-    state: directory
-    mode: '0744'
+#    http_host: "html"
+#  file:
+#    path: /var/www/{{ http_host }}/wordpress/*
+#    state: directory
+#    mode: '0755'
 
 
 - name: Set up wp-config
   template:
     src: "files/wp-config.php.j2"
     dest: "/var/www/html/wordpress/wp-config.php"
+    owner: apache
+    group: apache
+    mode: '0755'
   notify:
     - restart apache
- 
+    - restart mariadb
