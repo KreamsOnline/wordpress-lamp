@@ -1,0 +1,32 @@
+---
+- name: Install package.
+  yum:
+     name:
+     - http://rpms.remirepo.net/enterprise/remi-release-7.rpm
+     - yum-utils
+     state: present
+
+- name: install latest php.
+  shell: yum-config-manager --disable remi-php54
+
+- name: install latest php.
+  shell: yum-config-manager --enable remi-php73
+
+- name: clean all and update.
+  shell: yum update -y
+
+- name: install mariadb
+  yum:
+    name:
+      - httpd
+      - mariadb
+      - mariadb-server
+      - php
+      - php-common
+      - php-mysql
+      - php-gd
+      - php-mcrypt
+      - php-xml  
+      - php-mbstring
+      - MySQL-python
+    state: latest
